@@ -1,12 +1,14 @@
 <template>
   <div class="login-form" v-if="!isRegistering">
       <h2>Welcome back!</h2>
+      <p v-if="errorMessage">{{errorMessage}}</p>
+      
       <form @submit.prevent="onSubmit">
           <label for="login-username">Username</label>
           <input type="text" id="login-username" v-model.lazy.trim="username" ref="usernameField" required>
 
           <label for="login-password">Password</label>
-          <input type="password" id="login-password" v-model.lazy.trim="password" required>
+          <input type="password" id="login-password" v-model.lazy.trim="password" ref="passwordField" required>
 
           <button class="btn btn-confirm" type="submit">Login</button>
           <p>Need an account? <a @click.prevent="onRegisterLinkClicked" id="register-form-link">Register</a></p>
@@ -32,23 +34,24 @@
             onSubmit() {
                 if (this.username && this.password) {
                     if (login(this.username, this.password)) {
-                        console.log('Succesfully logged in', [{'u': this.username}, {'p': this.password}]);
+                        this.$emit('user-logged-in', this.username);
                         this.cleanForm();
                         return;
                     }
-                    console.log('No matching user found');
+                    this.errorMessage = "No matching user found";
                     return;
                 }
-                console.log('Fill out form')
+                this.errorMessage = "Please fill out all fields"
 
             },
             onRegisterLinkClicked() {
-                this.isRegistering = true;
                 this.cleanForm();
+                this.isRegistering = true;
             },
-            registrationCompleted() {
+            registrationCompleted(username) {
                 this.isRegistering = false;
-                this.focusOnUsernameField();
+                this.username = username;
+                this.focusOnPasswordField();
             },
             registrationCancelled() {
                 this.isRegistering = false;
@@ -59,11 +62,18 @@
                     const usernameFieldRef = this.$refs.usernameField;
                     usernameFieldRef.focus();
                 });
+            },
+            focusOnPasswordField() {
+                this.$nextTick(() => {
+                    const passwordFieldRef = this.$refs.passwordField;
+                    passwordFieldRef.focus();
+                });
             }
         },
         data() {
             return {
                 isRegistering: false,
+                errorMessage: "",
                 username: "",
                 password: ""
             }

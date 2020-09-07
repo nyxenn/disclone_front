@@ -25,7 +25,7 @@ export default {
         onSubmit() {
             if (this.username && this.password) {
                 if (register(this.username.toLowerCase(), this.password)) {
-                    this.$emit("register-submitted");
+                    this.$emit("register-submitted", this.username);
                     return;
                 }
                 this.errorMessage = "Username already taken";
