@@ -11,32 +11,35 @@
       Add
     </p>
 
-    <modal name="add-server-modal">
-      <div @click="createServer">Create</div>
-      <div @click="joinServer">Join</div>
-    </modal>
+    <join-create-server :isShowingModal="this.isShowingModal" @close-modal="closeModal" :user="this.user"></join-create-server>
   </div>
 </template>
 
 <script>
+import JoinCreateServer from './channel/modal/JoinCreateServer';
+
 export default {
+  components: {
+    JoinCreateServer
+  },
   props: {
-    servers: {required: true, type: Array}
+    servers: {required: true},
+    user: {required: true, type: Object},
+  },
+  data() {
+    return {
+      isShowingModal: false,
+    }
   },
   methods: {
     selectServer(serverId) {
       this.$emit('server-selected', serverId);
     },
     addServer() {
-      this.$modal.show('add-server-modal');
+      this.isShowingModal = true;
     },
-    createServer() {
-      // Todo
-      this.$modal.close('add-server-modal');
-    },
-    joinServer() {
-      // Todo
-      this.$modal.close('add-server-modal');
+    closeModal() {
+      this.isShowingModal = false;
     },
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="application-overview">
-      <server-sidebar :servers="this.user.servers" @server-selected="serverSelected" class="server-sidebar" />
+      <server-sidebar :servers="this.servers" @server-selected="serverSelected" :user="this.user" class="server-sidebar" />
       <server-overview :server="this.server" :user="this.user" class="server-overview" />
   </div>
 </template>
@@ -20,12 +20,13 @@ export default {
         }
     },
     props: {
-        user: {required: true, type: Object}
+        user: {required: true, type: Object},
+        servers: {required: true, type: Array},
     },
     methods: {
         serverSelected(serverId) {
             if (serverId) {
-                const server = this.user.servers.find(s => s.id === serverId);
+                const server = this.servers.find(s => s.id === serverId);
                 this.server = server;
                 return;
             }
@@ -37,23 +38,14 @@ export default {
 
 <style>
     .application-overview {
-        border: 1px solid red;
-        box-sizing: border-box;
-
         display: flex;
     }
 
     .server-sidebar {
-        border: 1px solid blue;
-        box-sizing: border-box;
-
         height: 100%;
     }
 
     .server-overview {
-        border: 1px solid green;
-        box-sizing: border-box;
-
         height: 100%;
         width: 100%;
     }

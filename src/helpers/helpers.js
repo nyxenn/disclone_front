@@ -1,17 +1,19 @@
 /* eslint-disable no-unused-vars */
+import {Observable, Subject, BehaviorSubject} from 'rxjs';
+
 let users = [
     {
-        id: 1,
+        id: 144,
         'username': 's',
         'password': 'a'
     },
     {
-        id: 2,
+        id: 233,
         'username': 'lostmylife',
         'password': 'beta'
     },
     {
-        id: 3,
+        id: 399,
         'username': 'sticks',
         'password': 'omega'
     }
@@ -49,7 +51,7 @@ let servers = [
     {
         id: 1,
         name: "Bjoef Fanclub",
-        members: [1, 2, 3],
+        members: [144, 233, 399],
         channels: [
             {
                 id: 1,
@@ -58,25 +60,25 @@ let servers = [
                 history: [
                     {
                         id: 0,
-                        user: 1,
+                        user: 144,
                         message: "lol",
                         timestamp: 1599483727
                     },
                     {
                         id: 1,
-                        user: 2,
+                        user: 233,
                         message: "?",
                         timestamp: 1599483787
                     },
                     {
                         id: 2,
-                        user: 3,
+                        user: 399,
                         message: "ge stinkt",
                         timestamp: 1599483797
                     },
                     {
                         id: 3,
-                        user: 3,
+                        user: 399,
                         message: "xd",
                         timestamp: 1599483798
                     },
@@ -89,7 +91,7 @@ let servers = [
                 history: [
                     {
                         id: 0,
-                        user: 2,
+                        user: 233,
                         message: "cava zeep",
                         timestamp: 1599483798
                     }
@@ -107,7 +109,7 @@ let servers = [
                 history: [
                     {
                         id: 0,
-                        user: 1,
+                        user: 144,
                         message: "#1 yentl mag geen gifs spammen",
                         timestamp: 1599483798
                     }
@@ -125,7 +127,7 @@ let servers = [
                 history: [
                     {
                         id: 0,
-                        user: 2,
+                        user: 233,
                         message: "no yentls allowed",
                         timestamp: 1599483798
                     }
@@ -136,7 +138,7 @@ let servers = [
     {
         id: 2,
         name: "Minecraft",
-        members: [1, 3],
+        members: [144, 399],
         channels: [
             {
                 id: 1,
@@ -158,7 +160,7 @@ let servers = [
     {
         id: 7,
         name: "The Bromo's",
-        members: [2],
+        members: [233],
         channels: [
             {
                 id: 1,
@@ -180,12 +182,12 @@ let servers = [
     {
         id: 10,
         name: "Warframe",
-        members: [1],
+        members: [144],
         channels: [
             {
                 id: 1,
                 name: "announcements",
-                default: false,
+                default: true,
             },
             {
                 id: 2,
@@ -196,8 +198,15 @@ let servers = [
     }
 ];
 
-export function getServerListByUser(userid) {
-    return servers.filter(s => s.members.includes(userid));
+const serverList$ = new BehaviorSubject();
+
+function filterServersByUser(userId) {
+    return servers.filter(s => s.members.includes(userId));
+}
+
+export function getServerListByUser(userId) {
+    serverList$.next(filterServersByUser(userId));
+    return serverList$;
 }
 
 export function getMembers(userIds) {
@@ -208,4 +217,34 @@ export function getMembers(userIds) {
         }
     });
     return members;
+}
+
+export function createServer(serverName, userId) {
+    const newServer = {
+        id: servers[servers.length - 1].id + 1,
+        name: serverName,
+        members: [userId],
+        channels: [
+            {
+                id: 1,
+                name: "general",
+                default: true,
+            },
+        ]
+    }
+    servers.push(newServer);
+    getServerListByUser(userId);
+}
+
+export function joinServer(serverId, userId) {
+    serverId = parseInt(serverId);
+    const server = servers.find(s => s.id === serverId);
+    if (server) {
+        if (!server.members.includes(userId)) {
+            server.members.push(userId);
+            getServerListByUser(userId);
+        }
+        return true;
+    }
+    return false;
 }

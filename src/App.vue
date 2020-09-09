@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <login-form v-if="!isLoggedIn" @user-logged-in="userLoggedIn" />
-    <application-overview :user="this.user" v-else />
+    <application-overview :user="this.user" :servers="this.servers" v-else />
   </div>
 </template>
 
@@ -20,13 +20,17 @@ export default {
     userLoggedIn(username) {
       this.isLoggedIn = true;
       this.user = getUserInformation(username);
-      this.user.servers = getServerListByUser(this.user.id)
+      const serverList = getServerListByUser(this.user.id);
+      serverList.subscribe(servers => {
+        this.servers = servers;
+      });
     }
   },
   data() {
     return {
       isLoggedIn: false,
-      user: {}
+      user: {},
+      servers: [],
     }
   }
 }

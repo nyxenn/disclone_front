@@ -1,6 +1,15 @@
 # Changelog
 
 
+## 09/09/2020
+### Added
+- Server joining by server id
+- Server creation
+- Helper functions for joining and creating servers
+- Added rxjs to project
+### Updated
+- Changed user server list to be an observable
+
 ## 07/09/2020
 ### Added
 - Server list for user
