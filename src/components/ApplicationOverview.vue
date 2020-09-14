@@ -1,18 +1,22 @@
 <template>
   <div class="application-overview">
       <server-sidebar :servers="this.servers" @server-selected="serverSelected" :user="this.user" class="server-sidebar" />
-      <server-overview :server="this.server" :user="this.user" class="server-overview" />
+
+      <server-overview :server="this.server" :user="this.user" class="server-overview" v-if="this.server" />
+      <startpage-overview :user="this.user" v-else />
   </div>
 </template>
 
 <script>
-import ServerSidebar from './ServerSidebar.vue';
-import ServerOverview from './ServerOverview.vue';
+import ServerSidebar from './server/ServerSidebar.vue';
+import ServerOverview from './server/ServerOverview.vue';
+import StartpageOverview from "./startpage/StartpageOverview.vue";
 
 export default {
     components: {
         ServerSidebar,
         ServerOverview,
+        StartpageOverview,
     },
     data() {
         return {
@@ -26,7 +30,7 @@ export default {
     methods: {
         serverSelected(serverId) {
             if (serverId) {
-                const server = this.servers.find(s => s.id === serverId);
+                const server = this.servers.find(s => s.sid === serverId);
                 this.server = server;
                 return;
             }

@@ -1,23 +1,34 @@
 /* eslint-disable no-unused-vars */
 import {Observable, Subject, BehaviorSubject} from 'rxjs';
 
-let users = [
-    {
-        id: 144,
-        'username': 's',
-        'password': 'a'
-    },
-    {
-        id: 233,
-        'username': 'lostmylife',
-        'password': 'beta'
-    },
-    {
-        id: 399,
-        'username': 'sticks',
-        'password': 'omega'
-    }
-]
+let users = [{
+  "_id": {
+    "$oid": "5f5ce927c420944e3c657e81"
+  },
+  "username": "s",
+  "password": "a",
+  "uid": 1,
+  "friends": [2],
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f5ce93bc420944e3c657e82"
+  },
+  "username": "lostmylife",
+  "password": "b",
+  "uid": 2,
+  "friends": [1, 3],
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f5ce94dc420944e3c657e84"
+  },
+  "username": "sticks",
+  "password": "c",
+  "uid": 3,
+  "friends": [2],
+  "__v": 0
+}];
 
 
 export function login(username, password) {
@@ -40,163 +51,199 @@ export function register(username, password) {
 export function getUserInformation(username) {
     let user = users.find(u => u.username === username);
     if (user) {
+        let conversations = getConversationsSimple(user.uid);
+
+        if (conversations) user.conversations = conversations;
+        user.friends = getFriends(user.friends);
         return user;
     }
     return null;
 }
 
+function getUsername(uid) {
+  let user = users.find(u => u.uid === uid);
+  if (user) return user.username;
+  return null;
+}
+
+function getFriends(fl) {
+  let friends = [];
+
+  for (let f of fl) {
+    friends.push({"uid": f, "name": getUsername(f)});
+  }
+
+  return friends;
+}
 
 
-let servers = [
+
+let servers = [{
+  "_id": {
+    "$oid": "5f5b83a8f485883b58e33aa5"
+  },
+  "sid": 1,
+  "name": "Bjoef Fanclub",
+  "members": [
+    1,
+    2,
+    3
+  ],
+  "channels": [
     {
-        id: 1,
-        name: "Bjoef Fanclub",
-        members: [144, 233, 399],
-        channels: [
-            {
-                id: 1,
-                name: "it-fct",
-                default: true,
-                history: [
-                    {
-                        id: 0,
-                        user: 144,
-                        message: "lol",
-                        timestamp: 1599483727
-                    },
-                    {
-                        id: 1,
-                        user: 233,
-                        message: "?",
-                        timestamp: 1599483787
-                    },
-                    {
-                        id: 2,
-                        user: 399,
-                        message: "ge stinkt",
-                        timestamp: 1599483797
-                    },
-                    {
-                        id: 3,
-                        user: 399,
-                        message: "xd",
-                        timestamp: 1599483798
-                    },
-                ]
-            },
-            {
-                id: 2,
-                name: "shitpost",
-                default: false,
-                history: [
-                    {
-                        id: 0,
-                        user: 233,
-                        message: "cava zeep",
-                        timestamp: 1599483798
-                    }
-                ]
-            },
-            {
-                id: 3,
-                name: "billypaal",
-                default: false,
-            },
-            {
-                id: 4,
-                name: "rules",
-                default: false,
-                history: [
-                    {
-                        id: 0,
-                        user: 144,
-                        message: "#1 yentl mag geen gifs spammen",
-                        timestamp: 1599483798
-                    }
-                ]
-            },
-            {
-                id: 5,
-                name: "Voice",
-                default: false,
-            },
-            {
-                id: 6,
-                name: "no-yentl",
-                default: false,
-                history: [
-                    {
-                        id: 0,
-                        user: 233,
-                        message: "no yentls allowed",
-                        timestamp: 1599483798
-                    }
-                ]
-            },
-        ]
+      "cid": 1,
+      "name": "it-fct",
+      "default": true,
+      "history": [
+        {
+          "mid": 0,
+          "user": 1,
+          "message": "lol",
+          "timestamp": 1599483727
+        },
+        {
+          "mid": 1,
+          "user": 2,
+          "message": "?",
+          "timestamp": 1599483787
+        },
+        {
+          "mid": 2,
+          "user": 3,
+          "message": "ge stinkt",
+          "timestamp": 1599483797
+        },
+        {
+          "mid": 3,
+          "user": 3,
+          "message": "xd",
+          "timestamp": 1599483798
+        }
+      ]
     },
     {
-        id: 2,
-        name: "Minecraft",
-        members: [144, 399],
-        channels: [
-            {
-                id: 1,
-                name: "announcements",
-                default: false,
-            },
-            {
-                id: 2,
-                name: "discussion",
-                default: true,
-            },
-            {
-                id: 3,
-                name: "admin",
-                default: false,
-            },
-        ]
+      "cid": 2,
+      "name": "shitpost",
+      "default": false,
+      "history": [
+        {
+          "mid": 0,
+          "user": 2,
+          "message": "cava zeep",
+          "timestamp": 1599483798
+        }
+      ]
     },
     {
-        id: 7,
-        name: "The Bromo's",
-        members: [233],
-        channels: [
-            {
-                id: 1,
-                name: "general",
-                default: true,
-            },
-            {
-                id: 2,
-                name: "DnD",
-                default: false,
-            },
-            {
-                id: 3,
-                name: "Mancave 0/10",
-                default: false,
-            }
-        ]
+      "cid": 3,
+      "name": "billypaal",
+      "default": false
     },
     {
-        id: 10,
-        name: "Warframe",
-        members: [144],
-        channels: [
-            {
-                id: 1,
-                name: "announcements",
-                default: true,
-            },
-            {
-                id: 2,
-                name: "discussion",
-                default: false,
-            },
-        ]
+      "cid": 4,
+      "name": "rules",
+      "default": false,
+      "history": [
+        {
+          "mid": 0,
+          "user": 1,
+          "message": "#1 yentl mag geen gifs spammen",
+          "timestamp": 1599483798
+        }
+      ]
+    },
+    {
+      "cid": 5,
+      "name": "Voice",
+      "default": false
+    },
+    {
+      "cid": 6,
+      "name": "no-yentl",
+      "default": false,
+      "history": [
+        {
+          "mid": 0,
+          "user": 2,
+          "message": "no yentls allowed",
+          "timestamp": 1599483798
+        }
+      ]
     }
-];
+  ]
+},{
+  "_id": {
+    "$oid": "5f5b83a8f485883b58e33aa6"
+  },
+  "sid": 2,
+  "name": "Minecraft",
+  "members": [
+    1,
+    3
+  ],
+  "channels": [
+    {
+      "cid": 1,
+      "name": "announcements",
+      "default": false
+    },
+    {
+      "cid": 2,
+      "name": "discussion",
+      "default": true
+    },
+    {
+      "cid": 3,
+      "name": "admin",
+      "default": false
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "5f5b83a8f485883b58e33aa7"
+  },
+  "sid": 3,
+  "name": "The Bromo's",
+  "members": [2],
+  "channels": [
+    {
+      "cid": 1,
+      "name": "general",
+      "default": true
+    },
+    {
+      "cid": 2,
+      "name": "DnD",
+      "default": false
+    },
+    {
+      "cid": 3,
+      "name": "Mancave 0/10",
+      "default": false
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "5f5b83a8f485883b58e33aa8"
+  },
+  "sid": 4,
+  "name": "Warframe",
+  "members": [
+    1
+  ],
+  "channels": [
+    {
+      "cid": 1,
+      "name": "announcements",
+      "default": true
+    },
+    {
+      "cid": 2,
+      "name": "discussion",
+      "default": false
+    }
+  ]
+}];
 
 const serverList$ = new BehaviorSubject();
 
@@ -210,9 +257,9 @@ export function getServerListByUser(userId) {
 }
 
 export function getMembers(userIds) {
-    const members = users.filter(u => userIds.includes(u.id)).map(u => {
+    const members = users.filter(u => userIds.includes(u.uid)).map(u => {
         return {
-            id: u.id,
+            uid: u.uid,
             username: u.username
         }
     });
@@ -221,12 +268,12 @@ export function getMembers(userIds) {
 
 export function createServer(serverName, userId) {
     const newServer = {
-        id: servers[servers.length - 1].id + 1,
+        sid: servers[servers.length - 1].sid + 1,
         name: serverName,
         members: [userId],
         channels: [
             {
-                id: 1,
+                cid: 1,
                 name: "general",
                 default: true,
             },
@@ -238,7 +285,7 @@ export function createServer(serverName, userId) {
 
 export function joinServer(serverId, userId) {
     serverId = parseInt(serverId);
-    const server = servers.find(s => s.id === serverId);
+    const server = servers.find(s => s.sid === serverId);
     if (server) {
         if (!server.members.includes(userId)) {
             server.members.push(userId);
@@ -247,4 +294,93 @@ export function joinServer(serverId, userId) {
         return true;
     }
     return false;
+}
+
+
+
+let conversations = [
+  {
+    "dmid": 1,
+    "members": [1, 2],
+    "history": [
+      {
+        "mid": 1,
+        "user": 1,
+        "message": "amai dieje yentl",
+        timestamp: 1599924707
+      },
+      {
+        "mid": 2,
+        "user": 2,
+        "message": "hij is weer aant zagen",
+        timestamp: 1599924708
+      },
+      {
+        "mid": 3,
+        "user": 1,
+        "message": "neje zeker",
+        timestamp: 1599924710
+      },
+    ],
+    "date-created": 1599406307
+  },
+  {
+    "dmid": 2,
+    "members": [1, 2, 3],
+    "history": [
+      {
+        "mid": 1,
+        "user": 3,
+        "message": "warzone?",
+        timestamp: 1599924707
+      },
+      {
+        "mid": 2,
+        "user": 2,
+        "message": "nee",
+        timestamp: 1599924708
+      },
+      {
+        "mid": 3,
+        "user": 1,
+        "message": "nope",
+        timestamp: 1599924710
+      },
+    ],
+    "date-created": 1599924707
+  },
+  {
+    "dmid": 3,
+    "members": [1, 3],
+    "history": [
+      {
+        "mid": 1,
+        "user": 1,
+        "message": "noob",
+        timestamp: 1599924707
+      },
+      {
+        "mid": 2,
+        "user": 3,
+        "message": "nou xd",
+        timestamp: 1599924708
+      }
+    ],
+    "date-created": 1599579107
+  },
+];
+
+export function getConversationHistory(dmid) {
+  return conversations.find(c => c.dmid === dmid).history;
+}
+
+function getConversationsSimple(userId) {
+  return conversations.filter(c => c.members.includes(userId)).map(c => {
+
+    let members = c.members.map(m => {
+      return {"uid": m, "name": getUsername(m)}
+    });
+
+    return { "dmid": c.dmid, members, "date-created": c["date-created"] }
+  });
 }

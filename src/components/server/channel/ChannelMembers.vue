@@ -1,6 +1,6 @@
 <template>
   <div>
-      <p v-for="m in members" :key="m.id">
+      <p v-for="m in members" :key="m.uid">
           {{m.username}}
       </p>
   </div>

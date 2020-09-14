@@ -24,7 +24,7 @@ export default {
     },
     methods: {
         onSubmit() {
-            const succesfulJoin = joinServer(this.serverId, this.user.id);
+            const succesfulJoin = joinServer(this.serverId, this.user.uid);
             if (succesfulJoin) {
                 this.errorMessage = ""
                 this.$emit('joined-server');

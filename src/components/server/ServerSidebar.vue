@@ -3,7 +3,7 @@
     <p @click="selectServer(0)">Start</p>
     <hr>
 
-    <p v-for="s in servers" :key="s.id" @click="selectServer(s.id)">
+    <p v-for="s in servers" :key="s.sid" @click="selectServer(s.sid)">
       {{s.name}}
     </p>
 
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import JoinCreateServer from './channel/modal/JoinCreateServer';
+import JoinCreateServer from './modal/JoinCreateServer';
 
 export default {
   components: {

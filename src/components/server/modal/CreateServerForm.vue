@@ -22,7 +22,7 @@ export default {
     },
     methods: {
         onSubmit() {
-            createServer(this.serverName, this.user.id);
+            createServer(this.serverName, this.user.uid);
             this.$emit('created-server');
         },
         backToSelection() {

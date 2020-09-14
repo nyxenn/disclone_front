@@ -20,7 +20,7 @@ export default {
     userLoggedIn(username) {
       this.isLoggedIn = true;
       this.user = getUserInformation(username);
-      const serverList = getServerListByUser(this.user.id);
+      const serverList = getServerListByUser(this.user.uid);
       serverList.subscribe(servers => {
         this.servers = servers;
       });

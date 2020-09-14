@@ -1,7 +1,7 @@
 <template>
   <div>
-      <p v-for="msg in history" :key="msg.id">
-          {{ members.find(m => m.id === msg.user).username }}, {{ timestampToDateString(msg.timestamp )}}
+      <p v-for="msg in history" :key="msg.mid">
+          {{ members.find(m => m.uid == msg.user).username }}, {{ timestampToDateString(msg.timestamp )}}
           <br>
           {{ msg.message }}
       </p>

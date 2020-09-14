@@ -1,7 +1,7 @@
 <template>
   <div class="channels-container">
     <div class="channels">
-      <p v-for="c in this.channels" :key="c.id" @click="changeChannel(c.id)">
+      <p v-for="c in this.channels" :key="c.cid" @click="changeChannel(c.cid)">
         {{c.name}}
       </p>
     </div>
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import UserInfoTag from './UserInfoTag.vue';
+import UserInfoTag from './../../UserInfoTag.vue';
 
 export default {
   props: {
