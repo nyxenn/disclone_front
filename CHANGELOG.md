@@ -1,5 +1,24 @@
 # Changelog
 
+## 21/09/2020
+### Added
+- Startpage shows friend list, friend requests
+- Added user, servers, friends, requests, conversations to vuex store
+- Added axios, vuex to project
+### Changed
+- Refactored project file tree slightly
+- Updated many components to interact with backend instead of test data in helpers.js
+
+## 14/09/2020
+### Added
+- Startpage overview
+- Startpage friend view
+- Direct message ('dm') view and list
+- Test data for dms ('conversations') in helpers.js
+- Helper functions for testing conversations and friends
+### Updated
+- Restructured project file tree
+- Added simplified data where needed to older test functions in helpers.js
 
 ## 09/09/2020
 ### Added

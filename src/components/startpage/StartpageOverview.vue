@@ -1,31 +1,29 @@
 <template>
   <div class="startpage">
-      <start-conversations-list class="conversations-list" :user="this.user" @open-conversation="openConversation" />
+      <start-conversations-list class="conversations-list" @open-conversation="openConversation" />
 
-      <start-conversation class="conversation" :user="this.user" :conversation="this.conversation" v-if="this.conversation" />
-      <start-friends class="friends-overview" :user="this.user" v-else />
+      <start-conversation class="conversation" :conversation="this.conversation" :history="this.history" v-if="this.conversation" />
+      <start-friends-overview class="friends-overview" v-else />
   </div>
 </template>
 
 <script>
 import StartConversationsList from './StartConversationsList.vue';
 import StartConversation from './StartConversation.vue';
-import StartFriends from './StartFriends.vue';
-import {getConversationHistory} from '../../helpers/helpers.js';
+import StartFriendsOverview from './friends/StartFriendsOverview.vue';
+import axios from 'axios';
 
 export default {
-    props: {
-        user: {required: true, type: Object}
-    },
     data() {
         return {
-            conversation: null
+            conversation: null,
+            history: null
         }
     },
     components: {
         StartConversationsList,
         StartConversation,
-        StartFriends
+        StartFriendsOverview
     },
     methods: {
         showFriends() {
@@ -36,8 +34,15 @@ export default {
                 this.conversation = null;
                 return;
             }
-            this.conversation = this.user.conversations.find(c => c.dmid === dmid);
-            this.conversation.history = getConversationHistory(this.conversation.dmid);
+            this.conversation = this.$store.state.conversations.find(c => c.dmid === dmid);
+            axios.get(`/conv/history/${dmid}`)
+              .then(res => {
+                if (res.status === 200) {
+                  this.history = res.data.history;
+                  return;
+                }
+              })
+              .catch(err => console.error(err));
         }
     }
 

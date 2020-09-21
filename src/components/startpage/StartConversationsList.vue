@@ -1,16 +1,16 @@
 <template>
     <div>
-        <span id="friends-button" @click="openConversation">Friends</span>
-        <span id="dms-header">Direct messages</span>
+        <button id="friends-button" @click="openConversation">Friends</button>
+        <h3 id="dms-header">Direct messages</h3>
 
         <br><br>
 
-        <p v-for="dm in user.conversations" :key="dm.dmid" @click="openConversation(dm.dmid)">
+        <a class="conversation-link" v-for="dm in conversations" :key="dm.dmid" @click="openConversation(dm.dmid)">
             {{getNames(dm.members)}}
-        </p>
+        </a>
 
         <br>
-        <user-info-tag :user=this.user />
+        <user-info-tag id="user-tag" />
     </div>
 </template>
 
@@ -18,8 +18,9 @@
 import UserInfoTag from "../UserInfoTag.vue";
 
 export default {
-    props: {
-        user: {required: true, type: Object},
+    computed: {
+        conversations() { return this.$store.state.conversations; },
+        user() { return this.$store.state.user; }
     },
     components: {
         UserInfoTag,
@@ -31,7 +32,7 @@ export default {
             for (let u of users) {
                 if (u.uid !== this.user.uid) {
                     if (others) others += ", "; 
-                    others += u.name;
+                    others += u.username;
                 }
             }
             return others;
@@ -39,7 +40,7 @@ export default {
         openConversation(cid) {
             this.$emit('open-conversation', cid);
         }
-    }
+    },
 }
 </script>
 

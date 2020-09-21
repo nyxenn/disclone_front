@@ -18,6 +18,7 @@ let users = [{
   "password": "b",
   "uid": 2,
   "friends": [1, 3],
+  "requests": [],
   "__v": 0
 },{
   "_id": {
@@ -49,18 +50,23 @@ export function register(username, password) {
 }
 
 export function getUserInformation(username) {
-    let user = users.find(u => u.username === username);
+    let u = users.find(u => u.username === username);
+    let user = {... u};
     if (user) {
         let conversations = getConversationsSimple(user.uid);
+        let reqs = getRequests(user.uid);
 
-        if (conversations) user.conversations = conversations;
+        user.conversations = conversations;
+        user.requests = reqs;
         user.friends = getFriends(user.friends);
+        console.log(user);
+        console.log(users);
         return user;
     }
     return null;
 }
 
-function getUsername(uid) {
+export function getUsername(uid) {
   let user = users.find(u => u.uid === uid);
   if (user) return user.username;
   return null;
@@ -93,7 +99,6 @@ let servers = [{
     {
       "cid": 1,
       "name": "it-fct",
-      "default": true,
       "history": [
         {
           "mid": 0,
@@ -124,7 +129,6 @@ let servers = [{
     {
       "cid": 2,
       "name": "shitpost",
-      "default": false,
       "history": [
         {
           "mid": 0,
@@ -137,12 +141,10 @@ let servers = [{
     {
       "cid": 3,
       "name": "billypaal",
-      "default": false
     },
     {
       "cid": 4,
       "name": "rules",
-      "default": false,
       "history": [
         {
           "mid": 0,
@@ -154,13 +156,11 @@ let servers = [{
     },
     {
       "cid": 5,
-      "name": "Voice",
-      "default": false
+      "name": "Voice"
     },
     {
       "cid": 6,
       "name": "no-yentl",
-      "default": false,
       "history": [
         {
           "mid": 0,
@@ -184,18 +184,15 @@ let servers = [{
   "channels": [
     {
       "cid": 1,
-      "name": "announcements",
-      "default": false
+      "name": "announcements"
     },
     {
       "cid": 2,
-      "name": "discussion",
-      "default": true
+      "name": "discussion"
     },
     {
       "cid": 3,
-      "name": "admin",
-      "default": false
+      "name": "admin"
     }
   ]
 },{
@@ -208,18 +205,15 @@ let servers = [{
   "channels": [
     {
       "cid": 1,
-      "name": "general",
-      "default": true
+      "name": "general"
     },
     {
       "cid": 2,
-      "name": "DnD",
-      "default": false
+      "name": "DnD"
     },
     {
       "cid": 3,
-      "name": "Mancave 0/10",
-      "default": false
+      "name": "Mancave 0/10"
     }
   ]
 },{
@@ -234,13 +228,11 @@ let servers = [{
   "channels": [
     {
       "cid": 1,
-      "name": "announcements",
-      "default": true
+      "name": "announcements"
     },
     {
       "cid": 2,
-      "name": "discussion",
-      "default": false
+      "name": "discussion"
     }
   ]
 }];
@@ -274,8 +266,7 @@ export function createServer(serverName, userId) {
         channels: [
             {
                 cid: 1,
-                name: "general",
-                default: true,
+                name: "general"
             },
         ]
     }
@@ -307,19 +298,19 @@ let conversations = [
         "mid": 1,
         "user": 1,
         "message": "amai dieje yentl",
-        timestamp: 1599924707
+        "timestamp": 1599924707
       },
       {
         "mid": 2,
         "user": 2,
         "message": "hij is weer aant zagen",
-        timestamp: 1599924708
+        "timestamp": 1599924708
       },
       {
         "mid": 3,
         "user": 1,
-        "message": "neje zeker",
-        timestamp: 1599924710
+        "message": "yup",
+        "timestamp": 1599924710
       },
     ],
     "date-created": 1599406307
@@ -332,19 +323,19 @@ let conversations = [
         "mid": 1,
         "user": 3,
         "message": "warzone?",
-        timestamp: 1599924707
+        "timestamp": 1599924707
       },
       {
         "mid": 2,
         "user": 2,
         "message": "nee",
-        timestamp: 1599924708
+        "timestamp": 1599924708
       },
       {
         "mid": 3,
         "user": 1,
         "message": "nope",
-        timestamp: 1599924710
+        "timestamp": 1599924710
       },
     ],
     "date-created": 1599924707
@@ -357,13 +348,13 @@ let conversations = [
         "mid": 1,
         "user": 1,
         "message": "noob",
-        timestamp: 1599924707
+        "timestamp": 1599924707
       },
       {
         "mid": 2,
         "user": 3,
         "message": "nou xd",
-        timestamp: 1599924708
+        "timestamp": 1599924708
       }
     ],
     "date-created": 1599579107
@@ -383,4 +374,43 @@ function getConversationsSimple(userId) {
 
     return { "dmid": c.dmid, members, "date-created": c["date-created"] }
   });
+}
+
+let requests = [
+  {
+    "rid": 1,
+    "sender": 3,
+    "receiver": 1,
+    "timestamp": 1599483727
+  }
+];
+
+
+function getRequests(userid) {
+  let reqs = requests.filter(r => r.sender === userid || r.receiver === userid);
+  return reqs.map(r => {
+    return {
+      "rid": r.rid,
+      "type": r.receiver === userid ? "incoming" : "outgoing",
+      "user": r.receiver === userid ? r.sender : r.receiver,
+      "timestamp": r.timestamp
+    }
+  })
+}
+
+function deleteRequest(request) {
+  requests.splice(requests.indexOf(request), 1);
+}
+
+export function addFriend(reqid) {
+  const req = requests.find(r => r.rid === reqid);
+
+  const receiver = users.find(u => u.uid === req.receiver);
+  const sender = users.find(u => u.uid === req.sender);
+  
+  receiver.friends.push(sender.uid);
+  sender.friends.push(receiver.uid);
+
+  
+  deleteRequest(req);
 }

@@ -4,8 +4,8 @@
 
 <script>
 export default {
-  props: {
-    user: {required: true, type: Object}
+  computed: {
+    user() { return this.$store.state.user; }
   }
 
 }

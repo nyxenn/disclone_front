@@ -1,9 +1,9 @@
 <template>
   <div class="application-overview">
-      <server-sidebar :servers="this.servers" @server-selected="serverSelected" :user="this.user" class="server-sidebar" />
+      <server-sidebar @server-selected="serverSelected" class="server-sidebar" />
 
-      <server-overview :server="this.server" :user="this.user" class="server-overview" v-if="this.server" />
-      <startpage-overview :user="this.user" v-else />
+      <server-overview :server="this.server" class="server-overview" v-if="this.server" />
+      <startpage-overview v-else />
   </div>
 </template>
 
@@ -23,9 +23,8 @@ export default {
             server: null
         }
     },
-    props: {
-        user: {required: true, type: Object},
-        servers: {required: true, type: Array},
+    computed: {
+        servers() { return this.$store.state.servers; }
     },
     methods: {
         serverSelected(serverId) {

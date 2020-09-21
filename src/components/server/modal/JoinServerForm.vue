@@ -10,11 +10,11 @@
 </template>
 
 <script>
-import {joinServer} from '../../../helpers/helpers.js';
+import axios from "axios";
 
 export default {
-    props: {
-        user: {required: true, type: Object},
+    computed: {
+        user() { return this.$store.state.user; }
     },
     data() {
         return {
@@ -24,13 +24,34 @@ export default {
     },
     methods: {
         onSubmit() {
-            const succesfulJoin = joinServer(this.serverId, this.user.uid);
-            if (succesfulJoin) {
-                this.errorMessage = ""
-                this.$emit('joined-server');
+            if (!this.serverId) {
+                this.errorMessage = "Please enter id of the server you wish to join.";
                 return;
             }
-            this.errorMessage = "Could not find server with given ID";
+
+            axios.post("/server/join", {serverid: this.serverId, userid: this.user.uid})
+                .then(res => {
+                    if (res.status === 200) {
+                        this.$store.commit("updateServers", res.data);
+                        this.errorMessage = "";
+                        this.$emit("joined-server");
+                    }
+                })
+                .catch(err => {
+                    if (err.response.data) {
+                        switch(err.response.data) {
+                            case "Could not find":
+                                this.errorMessage = "Could not find server with given id";
+                                break;
+                            case "Already joined":
+                                this.errorMessage = "You are already a member of this server";
+                                break;
+                        }
+                        return;
+                    }
+                    this.errorMessage = "Something went wrong. Please try again.";
+                    console.error(err);
+                });
         },
         backToSelection() {
             this.$emit('cancel-joining')

@@ -19,8 +19,8 @@
 </template>
 
 <script>
-    import {login} from '../helpers/helpers.js';
     import RegistrationForm from './RegistrationForm.vue';
+    import axios from 'axios';
 
     export default {
         components: {
@@ -33,13 +33,20 @@
             },
             onSubmit() {
                 if (this.username && this.password) {
-                    if (login(this.username, this.password)) {
-                        this.$emit('user-logged-in', this.username);
-                        this.cleanForm();
+                    axios.post("/user/login", {
+                        "username": this.username,
+                        "password": this.password
+                    })
+                    .then(res => {
+                        if (res.status === 200) {
+                            this.$emit('user-logged-in', res.data);
+                            this.cleanForm();
+                            return;
+                        }
+                        this.errorMessage = "Something went wrong. Please try again.";
                         return;
-                    }
-                    this.errorMessage = "No matching user found";
-                    return;
+                    })
+                    .catch(err => console.error(err));
                 }
                 this.errorMessage = "Please fill out all fields"
 
@@ -48,9 +55,9 @@
                 this.cleanForm();
                 this.isRegistering = true;
             },
-            registrationCompleted(username) {
+            registrationCompleted(user) {
                 this.isRegistering = false;
-                this.username = username;
+                this.username = user.username;
                 this.focusOnPasswordField();
             },
             registrationCancelled() {

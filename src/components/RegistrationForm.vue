@@ -17,20 +17,32 @@
 </template>
 
 <script>
-import {register} from '../helpers/helpers.js';
+import axios from "axios";
 
 export default {
     methods: {
-        register,
         onSubmit() {
             if (this.username && this.password) {
-                if (register(this.username.toLowerCase(), this.password)) {
-                    this.$emit("register-submitted", this.username);
-                    return;
-                }
-                this.errorMessage = "Username already taken";
-                return;
+                axios.post("/user/register", {
+                    username: this.username,
+                    password: this.password
+                })
+                .then(res => {
+                    if (res.status === 200) {
+                        this.$emit("register-submitted", res.data);
+                        return;
+                    }
+                    this.errorMessage = "Something went wrong. Please try again."
+                })
+                .catch(err => {
+                    if (err.response.data) {
+                        this.errorMessage = "Username already taken";
+                        return;
+                    }
+                    console.error(err);
+                });
             }
+
             this.errorMessage = "Please fill in all fields";
         },
         returnToLoginForm() {

@@ -1,14 +1,14 @@
 <template>
   <div id="app">
-    <login-form v-if="!isLoggedIn" @user-logged-in="userLoggedIn" />
-    <application-overview :user="this.user" :servers="this.servers" v-else />
+    <login-form v-if="!isLoggedIn" @user-logged-in="userLoggedIn" @user-registered="userLoggedIn" />
+    <application-overview v-if="user" />
   </div>
 </template>
 
 <script>
 import LoginForm from './components/LoginForm.vue'
 import ApplicationOverview from './components/ApplicationOverview.vue';
-import {getUserInformation, getServerListByUser} from './helpers/helpers.js';
+import axios from 'axios';
 
 export default {
   name: 'App',
@@ -16,23 +16,60 @@ export default {
     LoginForm,
     ApplicationOverview,
   },
+  computed: {
+    user() { return this.$store.state.user; }
+  },
   methods: {
-    userLoggedIn(username) {
-      this.isLoggedIn = true;
-      this.user = getUserInformation(username);
-      const serverList = getServerListByUser(this.user.uid);
-      serverList.subscribe(servers => {
-        this.servers = servers;
-      });
+    userLoggedIn(user) {
+      this.$store.commit("updateUser", user);
+
+      axios.get(`/server/u/${this.user.uid}`)
+        .then(res => {
+          if (res.status === 200) {
+            this.$store.commit("updateServers", res.data);
+            this.getFriends();
+            this.getConversations();
+            this.getRequests();
+            this.isLoggedIn = true;
+            return;
+          }
+        })
+        .catch(err => console.error(err));
+    },
+    getFriends() {
+      axios.post("/user/friends", {friends: this.$store.state.user.friends})
+        .then(res => {
+          if (res.status === 200) {
+            this.$store.commit("updateFriends", res.data);
+          }
+        })
+        .catch(err => console.error(err));
+    },
+    getConversations() {
+      axios.get(`/conv/simple/${this.$store.state.user.uid}`)
+        .then(res => {
+          if (res.status === 200) {
+            this.$store.commit("updateConversations", res.data);
+          }
+        })
+        .catch(err => console.error(err));
+    },
+    getRequests() {
+      axios.get(`/req/all/${this.$store.state.user.uid}`)
+        .then(res => {
+          if (res.status === 200) {
+            this.$store.commit("updateRequests", res.data);
+          }
+        })
+        .catch(err => console.error(err));
     }
   },
   data() {
     return {
       isLoggedIn: false,
-      user: {},
-      servers: [],
     }
-  }
+  },
+  
 }
 </script>
 

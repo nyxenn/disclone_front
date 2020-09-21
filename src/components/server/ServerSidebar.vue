@@ -1,17 +1,17 @@
 <template>
   <div>
-    <p @click="selectServer(0)">Start</p>
+    <button @click="selectServer(0)">Start</button>
     <hr>
 
-    <p v-for="s in servers" :key="s.sid" @click="selectServer(s.sid)">
+    <button v-for="s in servers" :key="s.sid" @click="selectServer(s.sid)">
       {{s.name}}
-    </p>
+    </button>
 
-    <p @click="addServer">
+    <button @click="addServer">
       Add
-    </p>
+    </button>
 
-    <join-create-server :isShowingModal="this.isShowingModal" @close-modal="closeModal" :user="this.user"></join-create-server>
+    <join-create-server :isShowingModal="this.isShowingModal" @close-modal="closeModal" />
   </div>
 </template>
 
@@ -22,9 +22,8 @@ export default {
   components: {
     JoinCreateServer
   },
-  props: {
-    servers: {required: true},
-    user: {required: true, type: Object},
+  computed: {
+    servers() { return this.$store.state.servers; }
   },
   data() {
     return {

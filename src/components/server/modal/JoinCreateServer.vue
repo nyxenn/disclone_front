@@ -6,8 +6,8 @@
       </div>
 
       <div v-else>
-          <create-server-form v-if="isCreating" @created-server="createdServer" @cancel-creation="cancelCreate" :user="this.user"></create-server-form>
-          <join-server-form v-else @joined-server="joinedServer" @cancel-joining="cancelJoin" :user="this.user"></join-server-form>
+          <create-server-form v-if="isCreating" @created-server="createdServer" @cancel-creation="cancelCreate" />
+          <join-server-form v-else @joined-server="joinedServer" @cancel-joining="cancelJoin" />
       </div>
   </modal>
 </template>
@@ -22,8 +22,7 @@ export default {
         JoinServerForm
     },
     props: {
-        isShowingModal: {required: true, type: Boolean},
-        user: {required: true, type: Object},
+        isShowingModal: {required: true, type: Boolean}
     },
     watch: {
         isShowingModal: function(showModal) {

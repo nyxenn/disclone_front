@@ -5,7 +5,7 @@
         {{c.name}}
       </p>
     </div>
-    <user-info-tag class="user-info-tag" :user=this.user />
+    <user-info-tag class="user-info-tag" />
   </div>
 </template>
 
@@ -14,8 +14,7 @@ import UserInfoTag from './../../UserInfoTag.vue';
 
 export default {
   props: {
-    channels: {required: true, type: Array},
-    user: {required: true, type: Object}
+    channels: {required: true, type: Array}
   },
   components: {
     UserInfoTag
