@@ -1,8 +1,8 @@
 <template>
   <div>
     <div id="friends-overview-headers">
-      <h3 class="fr-header" @click="openFriendsTab">Friends</h3>
-      <h3 class="fr-header" @click="openRequestsTab">Request</h3>
+      <button class="fr-header" @click="openFriendsTab">Friends</button>
+      <button class="fr-header" @click="openRequestsTab">Request</button>
       <button id="fr-header-btn" @click="openAddFriendForm">Add friend</button>
     </div>
 
@@ -65,5 +65,8 @@ export default {
 </script>
 
 <style>
-
+  .friends-overview-headers {
+    display: flex;
+    flex-wrap: nowrap;
+  }
 </style>

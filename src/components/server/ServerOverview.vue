@@ -1,7 +1,7 @@
 <template>
   <div class="server-container">
     <channel-list :channels="this.server.channels" @change-channel="changeChannel" class="channel-list" />
-    <channel-chat :history="this.channel.history" :members="this.members" class="channel-chat" />
+    <channel-chat :history="this.channel.history" :members="this.members" :sid="this.server.sid" :cid="this.channel.cid" class="channel-chat" />
     <channel-members :members="this.members" class="channel-members" />
   </div>
 </template>

@@ -2,6 +2,12 @@
   <div class="login-form" v-if="!isRegistering">
       <h2>Welcome back!</h2>
       <p v-if="errorMessage">{{errorMessage}}</p>
+
+      <div class="premade-logins">
+          <button @click="login('S')">S</button>
+          <button @click="login('B')">B</button>
+          <button @click="login('C')">C</button>
+      </div>
       
       <form @submit.prevent="onSubmit">
           <label for="login-username">Username</label>
@@ -75,6 +81,22 @@
                     const passwordFieldRef = this.$refs.passwordField;
                     passwordFieldRef.focus();
                 });
+            },
+            login(name) {
+                if (name === "S") {
+                    this.username = "s";
+                    this.password = "a"
+                }
+                if (name === "Lost") {
+                    this.username = "b";
+                    this.password = "b";
+                }
+                if (name === "Sticks") {
+                    this.username = "c";
+                    this.password = "c";
+                }
+
+                this.onSubmit();
             }
         },
         data() {

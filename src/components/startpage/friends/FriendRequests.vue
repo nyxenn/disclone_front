@@ -5,20 +5,19 @@
     <h3 class="req-type-header">Incoming</h3>
     <p v-for="r of this.incoming" :key="r.rid">
       <span class="req-user-name">{{ r.user.username }}</span>
-      <button @click="acceptRequest(r)">Accept</button>
-      <button @click="denyRequest(r.rid)">Deny</button>
+      <button @click="acceptRequest(r.rid, r.user.uid, r.user.username)">Accept</button>
+      <button @click="denyRequest(r.rid, r.user.username)">Deny</button>
     </p>
 
     <h3 class="req-type-header">Outgoing</h3>
     <p v-for="r of this.outgoing" :key="r.rid">
       <span class="req-user-name">{{ r.user.username }}</span>
-      <button @click="denyRequest(r.rid)">Cancel</button>
+      <button @click="denyRequest(r.rid, r.user.username)">Cancel</button>
     </p>
   </div>
 </template>
 
 <script>
-import axios from "axios";
 
 export default {
   data() {
@@ -29,7 +28,8 @@ export default {
   },
   computed: {
     requests() { return this.$store.state.requests; },
-    user() { return this.$store.state.user; }
+    user() { return this.$store.state.user; },
+    socket() { return this.$store.state.socket; }
   },
   watch: {
     requests: {
@@ -37,24 +37,25 @@ export default {
       handler: "updateRequests"
     }
   },
+  mounted() {
+    this.socket.on("new-req", (request) => {
+      this.$store.commit("newRequest", request);
+    });
+
+    this.socket.on("del-req", (rid) => {
+      this.$store.commit("deleteRequest", rid);
+    });
+
+    this.socket.on("acc-req", (rid, friend) => {
+      this.$store.commit("acceptRequest", {rid, friend});
+    });
+  },
   methods: {
-    acceptRequest(req) {
-      axios.post("/user/add", {uid: this.user.uid, fuid: req.user.uid, rid: req.rid})
-        .then(res => {
-          if (res.status === 200) {
-            this.$store.state.requests = res.data;
-          }
-        })
-        .catch(err => console.error(err));
+    acceptRequest(rid, fuid, friendname) {
+      this.socket.emit("acceptRequest", rid, this.user.uid, fuid, friendname);
     },
-    denyRequest(rid) {
-      axios.delete(`/req/r/${rid}&${this.user.uid}`)
-        .then(res => {
-          if (res.status === 200) {
-            this.$store.state.requests = res.data;
-          }
-        })
-        .catch(err => console.error(err));
+    denyRequest(rid, friendname) {
+      this.socket.emit("deleteRequest", rid, friendname);
     },
     updateRequests() {
       this.incoming = [];
@@ -63,7 +64,7 @@ export default {
       this.requests.map(r => {
         if (r.type === "incoming") this.incoming.push(r);
         if (r.type === "outgoing") this.outgoing.push(r);
-    });
+      });
     }
   }
 }

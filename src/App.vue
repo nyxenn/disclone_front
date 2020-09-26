@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <login-form v-if="!isLoggedIn" @user-logged-in="userLoggedIn" @user-registered="userLoggedIn" />
-    <application-overview v-if="user" />
+    <application-overview v-if="user && socket" />
   </div>
 </template>
 
@@ -17,10 +17,12 @@ export default {
     ApplicationOverview,
   },
   computed: {
-    user() { return this.$store.state.user; }
+    user() { return this.$store.state.user; },
+    socket() { return this.$store.state.socket; }
   },
   methods: {
     userLoggedIn(user) {
+      this.$store.commit("openSocket");
       this.$store.commit("updateUser", user);
 
       axios.get(`/server/u/${this.user.uid}`)

@@ -5,9 +5,11 @@
 
         <br><br>
 
-        <a class="conversation-link" v-for="dm in conversations" :key="dm.dmid" @click="openConversation(dm.dmid)">
-            {{getNames(dm.members)}}
-        </a>
+        <div class="conversation-links">
+            <button class="conversation-link" v-for="dm in conversations" :key="dm.dmid" @click="openConversation(dm.dmid)">
+                {{getNames(dm.members)}}
+            </button>
+        </div>
 
         <br>
         <user-info-tag id="user-tag" />
@@ -45,5 +47,8 @@ export default {
 </script>
 
 <style>
-
+    .conversation-links {
+        display: flex;
+        flex-direction: column;
+    }
 </style>

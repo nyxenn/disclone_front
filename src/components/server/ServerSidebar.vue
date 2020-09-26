@@ -3,11 +3,13 @@
     <button @click="selectServer(0)">Start</button>
     <hr>
 
-    <button v-for="s in servers" :key="s.sid" @click="selectServer(s.sid)">
-      {{s.name}}
-    </button>
+    <div class="server-btn-list">
+      <button v-for="s in servers" :key="s.sid" @click="selectServer(s.sid)" class="server-btn">
+        {{s.name}}
+      </button>
+    </div>
 
-    <button @click="addServer">
+    <button @click="addServer" class="add-server-btn">
       Add
     </button>
 
@@ -45,5 +47,31 @@ export default {
 </script>
 
 <style>
+  .server-btn-list {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
 
+  .server-btn, .add-server-btn {
+    height: 60px;
+    width: 60px;
+    padding: 0;
+    margin: 5px 10px;
+
+    overflow: hidden;
+    text-align: center;
+    word-wrap: break-word;
+  }
+
+  .add-server-btn {
+    height: 60px;
+    width: 60px;
+    color: rgb(40, 160, 20);
+    font-variant: small-caps;
+    text-transform: lowercase;
+    font-weight: bold;
+    border: 2px solid rgba(40, 180, 20, 0.8);
+    border-radius: 50%;
+  }
 </style>
