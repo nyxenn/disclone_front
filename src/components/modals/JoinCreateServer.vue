@@ -22,7 +22,8 @@ export default {
         JoinServerForm
     },
     props: {
-        isShowingModal: {required: true, type: Boolean}
+        isShowingModal: {required: true, type: Boolean},
+        sid: { required: false, type: String }
     },
     watch: {
         isShowingModal: function(showModal) {

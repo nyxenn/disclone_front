@@ -6,7 +6,7 @@
         <br><br>
 
         <div class="conversation-links">
-            <button class="conversation-link" v-for="dm in conversations" :key="dm.dmid" @click="openConversation(dm.dmid)">
+            <button class="conversation-link" v-for="dm in conversations" :key="dm._id" @click="openConversation(dm._id)">
                 {{getNames(dm.members)}}
             </button>
         </div>
@@ -32,7 +32,7 @@ export default {
             let others = "";
 
             for (let u of users) {
-                if (u.uid !== this.user.uid) {
+                if (u._id !== this.user._id) {
                     if (others) others += ", "; 
                     others += u.username;
                 }

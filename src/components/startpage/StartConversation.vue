@@ -39,7 +39,7 @@ export default {
   },
   mounted() {
     this.socket.on('new-dm-msg', (message, dmid) => {
-      if (dmid === this.conversation.dmid) {
+      if (dmid === this.conversation._id) {
         const pendingMsg = this.history.find(m => m.pending && m.user === message.user && m.message === message.message);
   
         if (!pendingMsg) {
@@ -67,21 +67,21 @@ export default {
       this.history = hist;
     },
     getUsername(uid) {
-      const user = this.conversation.members.find(m => m.uid === uid);
+      const user = this.conversation.members.find(m => m._id === uid);
       if (!user) return;
       
       return user.username;
     },
     sendMessage() {
       const message = {
-        "user": this.user.uid,
+        "user": this.user._id,
         "message": this.message,
         "timestamp": Date.now() / 1000,
         "pending": true
         };
       this.history.push(message);
 
-      this.socket.emit("sendDM", message, this.conversation.dmid);
+      this.socket.emit("sendDM", message, this.conversation._id);
 
       this.message = "";
     }

@@ -4,7 +4,7 @@
     <hr>
 
     <div class="server-btn-list">
-      <button v-for="s in servers" :key="s.sid" @click="selectServer(s.sid)" class="server-btn">
+      <button v-for="s in servers" :key="s._id" @click="selectServer(s._id)" class="server-btn">
         {{s.name}}
       </button>
     </div>
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import JoinCreateServer from './modal/JoinCreateServer';
+import JoinCreateServer from '../modals/JoinCreateServer.vue';
 
 export default {
   components: {
@@ -33,8 +33,8 @@ export default {
     }
   },
   methods: {
-    selectServer(serverId) {
-      this.$emit('server-selected', serverId);
+    selectServer(sid) {
+      this.$emit('server-selected', sid);
     },
     addServer() {
       this.isShowingModal = true;

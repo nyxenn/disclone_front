@@ -20,12 +20,20 @@ export default {
     user() { return this.$store.state.user; },
     socket() { return this.$store.state.socket; }
   },
+  mounted() {
+    this.$store.commit("openSocket");
+
+    this.socket.on("new-dm", (conv) => this.$store.commit("addNewConversation", conv));
+    this.socket.on("new-req", (request) => this.$store.commit("newRequest", request));
+    this.socket.on("del-req", (rid) => this.$store.commit("deleteRequest", rid));
+    this.socket.on("acc-req", (rid, friend) => this.$store.commit("acceptRequest", {rid, friend}));
+    this.socket.on("del-friend", (fuid) => this.$store.commit("deleteFriend", fuid));
+  },
   methods: {
     userLoggedIn(user) {
-      this.$store.commit("openSocket");
       this.$store.commit("updateUser", user);
 
-      axios.get(`/server/u/${this.user.uid}`)
+      axios.get(`/server/u/${this.user._id}`)
         .then(res => {
           if (res.status === 200) {
             this.$store.commit("updateServers", res.data);
@@ -48,7 +56,7 @@ export default {
         .catch(err => console.error(err));
     },
     getConversations() {
-      axios.get(`/conv/simple/${this.$store.state.user.uid}`)
+      axios.get(`/conv/simple/${this.$store.state.user._id}`)
         .then(res => {
           if (res.status === 200) {
             this.$store.commit("updateConversations", res.data);
@@ -57,7 +65,7 @@ export default {
         .catch(err => console.error(err));
     },
     getRequests() {
-      axios.get(`/req/all/${this.$store.state.user.uid}`)
+      axios.get(`/req/all/${this.$store.state.user._id}`)
         .then(res => {
           if (res.status === 200) {
             this.$store.commit("updateRequests", res.data);

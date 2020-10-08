@@ -31,7 +31,7 @@ export default {
                 return;
             }
 
-            axios.post("/server/new", {name: this.serverName, userid: this.user.uid})
+            axios.post("/server/new", {name: this.serverName, uid: this.user._id})
                 .then(res => {
                     if (res.status === 200) {
                         this.$store.commit("updateServers", res.data);

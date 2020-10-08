@@ -1,8 +1,8 @@
 <template>
   <div class="server-container">
-    <channel-list :channels="this.server.channels" @change-channel="changeChannel" class="channel-list" />
-    <channel-chat :history="this.channel.history" :members="this.members" :sid="this.server.sid" :cid="this.channel.cid" class="channel-chat" />
-    <channel-members :members="this.members" class="channel-members" />
+    <channel-list :channels="this.server.channels" :server="this.server" @change-channel="changeChannel" class="channel-list" />
+    <channel-chat :history="this.channel.history" :members="this.members" :sid="this.server._id" :cid="this.channel._id" class="channel-chat" />
+    <channel-members :members="this.members" :sid=this.server._id class="channel-members" />
   </div>
 </template>
 
@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     changeChannel(channelId) {
-      this.channel = this.server.channels.find(c => c.cid === channelId);
+      this.channel = this.server.channels.find(c => c._id === channelId);
     },
     serverChanged(newServer) {
       axios

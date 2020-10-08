@@ -3,7 +3,7 @@
       <start-conversations-list class="conversations-list" @open-conversation="openConversation" />
 
       <start-conversation class="conversation" :conversation="this.conversation" :history="this.history" v-if="this.conversation" />
-      <start-friends-overview class="friends-overview" v-else />
+      <start-friends-overview class="friends-overview" @open-conv="openConversationFriends" v-else />
   </div>
 </template>
 
@@ -20,6 +20,9 @@ export default {
             history: null
         }
     },
+    computed: {
+      socket() { return this.$store.state.socket; }
+    },
     components: {
         StartConversationsList,
         StartConversation,
@@ -30,11 +33,7 @@ export default {
             this.conversation = null;
         },
         openConversation(dmid) {
-            if (typeof(dmid) !== "number") {
-                this.conversation = null;
-                return;
-            }
-            this.conversation = this.$store.state.conversations.find(c => c.dmid === dmid);
+            this.conversation = this.$store.state.conversations.find(c => c._id === dmid);
             axios.get(`/conv/history/${dmid}`)
               .then(res => {
                 if (res.status === 200) {
@@ -43,6 +42,10 @@ export default {
                 }
               })
               .catch(err => console.error(err));
+        },
+        openConversationFriends(conv) {
+          this.history = conv.history;
+          this.conversation = conv;
         }
     }
 

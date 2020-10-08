@@ -24,12 +24,30 @@ export default {
         }
     },
     computed: {
-        servers() { return this.$store.state.servers; }
+        servers() { return this.$store.state.servers; },
+        socket() { return this.$store.state.socket; }
+    },
+    mounted() {
+        this.socket.on("srv-deleted", (sid) => {
+            this.$store.commit("deleteServer", sid);
+            this.socket.emit("leave", sid);
+            this.server = null;
+        });
+
+        this.socket.on("ch-added", (sid, channel) => {
+            this.$store.commit("addChannel", {sid, channel});
+            this.socket.emit("join", sid + "&" + channel._id);
+        });
+
+        this.socket.on("ch-deleted", (sid, cid) => {
+            this.$store.commit("deleteChannel", {sid, cid});
+            this.socket.emit("leave", sid + "&" + cid);
+        });
     },
     methods: {
-        serverSelected(serverId) {
-            if (serverId) {
-                const server = this.servers.find(s => s.sid === serverId);
+        serverSelected(sid) {
+            if (sid) {
+                const server = this.servers.find(s => s._id === sid);
                 this.server = server;
                 return;
             }

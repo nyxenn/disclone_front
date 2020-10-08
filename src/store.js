@@ -18,8 +18,9 @@ const mutations = {
         state.servers = servers;
 
         for (let s of servers) {
+            mutations.joinRoom(state, s._id);
             for (let ch of s.channels) {
-                mutations.joinRoom(state, s.sid + "&" + ch.cid);
+                mutations.joinRoom(state, s._id + "&" + ch._id);
             }
         }
     },
@@ -34,15 +35,10 @@ const mutations = {
         state.requests = requests;
     },
     updateConversations(state, conversations) {
-        conversations = conversations.map(c => {
-            c.members = c.memberdetails;
-            delete c.memberdetails;
-            return c;
-        });
         state.conversations = conversations;
 
         for (let c of conversations) {
-            mutations.joinRoom(state, c.dmid);
+            mutations.joinRoom(state, c._id);
         }
     },
     updateUserFriends(state, friends) {
@@ -55,19 +51,75 @@ const mutations = {
         if (!state.socket) state.socket = io();
         state.socket.emit("room", room);
     },
+    joinMember(state, serverMember) {
+        const server = state.servers.find(s => s._id === serverMember.sid);
+        const index = state.servers.indexOf(server);
+        server.members.push(serverMember.member);
+
+        state.servers[index] = server;
+    },
     newRequest(state, request) {
-        state.requests.push(request);
+        console.log("new Req", request);
+        const req = state.requests.find(r => toString(r._id) === toString(request._id));
+        const index = state.requests.indexOf(req);
+        if (index < 0) state.requests.push(request);
     },
     deleteRequest(state, rid) {
-        const req = state.requests.find(r => r.rid === rid);
+        const req = state.requests.find(r => toString(r._id) === toString(rid));
         const reqIndex = state.requests.indexOf(req);
 
-        state.requests.splice(reqIndex, 1);
+        if (reqIndex >= 0) state.requests.splice(reqIndex, 1);
     },
     acceptRequest(state, request) {
-        mutations.deleteRequest(state, request.rid);
-        if (!state.friends.includes(request.friend)) state.friends.push(request.friend);
-    }
+        const req = state.requests.find(r => toString(r._id) === toString(request._id));
+        const reqIndex = state.requests.indexOf(req);
+        if (reqIndex >= 0) state.requests.splice(reqIndex, 1);
+
+        const friend = state.friends.find(f => toString(f._id) === toString(request.friend._id));
+        const friendIndex = state.friends.indexOf(friend);
+        if (friendIndex < 0) state.friends.push(request.friend);
+    },
+    deleteFriend(state, fuid) {
+        const friend = state.friends.find(f => toString(f._id) === toString(fuid));
+        const index = state.friends.indexOf(friend);
+        if (index >= 0) state.friends.splice(state.friends.indexOf(fuid), 1);
+    },
+    addNewConversation(state, conv) {
+        const index = state.conversations.indexOf(conv._id);
+        if (index < 0) state.conversations.push(conv);
+    },
+    deleteServer(state, sid) {
+        const server = state.servers.find(s => s._id === sid);
+        const index = state.servers.indexOf(server);
+
+        if (index >= 0) state.servers.splice(index, 1);
+    },
+    addChannel(state, srv) {
+        const {sid, channel} = srv;
+        const server = state.servers.find(s => s._id === sid);
+        if (!server) return;
+        const serverIndex = state.servers.indexOf(server);
+
+        const index = server.channels.indexOf(channel);
+        if (index < 0) {
+            server.channels.push(channel);
+            state.servers[serverIndex] = server;
+        }
+    },
+    deleteChannel(state, ids) {
+        const {sid, cid} = ids;
+        const server = state.servers.find(s => s._id === sid);
+        if (!server) return;
+        const serverIndex = state.servers.indexOf(server);
+
+        const channel = server.channels.find(c => c._id === cid);
+        const index = server.channels.indexOf(channel);
+
+        if (index >= 0) {
+            server.channels.splice(index, 1);
+            state.servers[serverIndex] = server;
+        }
+    },
 };
 
 export default new Vuex.Store({

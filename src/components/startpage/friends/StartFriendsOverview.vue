@@ -10,7 +10,7 @@
 
     <friend-requests v-if="this.showRequests" />
     <friend-request-form v-else-if="this.showRequestForm" />
-    <friends-list v-else />
+    <friends-list @open-conv="openConversation" v-else />
   </div>
 </template>
 
@@ -59,6 +59,9 @@ export default {
       this.resetTabs();
       this.showRequestForm = true;
     },
+    openConversation(conv) {
+      this.$emit("open-conv", conv);
+    }
   },
 
 }

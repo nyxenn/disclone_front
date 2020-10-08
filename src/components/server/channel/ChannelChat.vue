@@ -1,7 +1,7 @@
 <template>
   <div>
       <p v-for="msg in history" :key="msg.mid">
-          {{ members.find(m => m.uid == msg.user).username }}, {{ timestampToDateString(msg.timestamp )}}
+          {{ members.find(m => m._id == msg.user).username }}, {{ timestampToDateString(msg.timestamp )}}
           <br>
           {{ msg.message }}
       </p>
@@ -15,8 +15,8 @@ export default {
     props: {
         history: {required: false, type: Array, default: () => {return []} },
         members: {required: true, type: Array},
-        sid: {required: false, type: Number},
-        cid: {required: false, type: Number},
+        sid: {required: false, type: String},
+        cid: {required: false, type: String},
     },
     data() {
         return {
@@ -53,7 +53,7 @@ export default {
         },
         sendMessage() {
             const message = {
-                "user": this.user.uid,
+                "user": this.user._id,
                 "message": this.message,
                 "timestamp": Date.now() / 1000,
                 "pending": true

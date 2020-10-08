@@ -23,8 +23,8 @@ export default {
   },
   methods: {
     onSubmit() {
-      if (this.friendname) {
-        this.socket.emit("sendRequest", this.user.uid, this.user.username, this.friendname);
+      if (this.friendname && this.friendname !== this.user.username) {
+        this.socket.emit("sendRequest", this.user._id, this.user.username, this.friendname);
       }
     }
   }

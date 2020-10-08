@@ -4,7 +4,7 @@
       <p v-if="errorMessage">{{errorMessage}}</p>
 
       <div class="premade-logins">
-          <button @click="login('S')">S</button>
+          <button @click="login('A')">A</button>
           <button @click="login('B')">B</button>
           <button @click="login('C')">C</button>
       </div>
@@ -83,15 +83,15 @@
                 });
             },
             login(name) {
-                if (name === "S") {
-                    this.username = "s";
+                if (name === "A") {
+                    this.username = "a";
                     this.password = "a"
                 }
-                if (name === "Lost") {
+                if (name === "B") {
                     this.username = "b";
                     this.password = "b";
                 }
-                if (name === "Sticks") {
+                if (name === "C") {
                     this.username = "c";
                     this.password = "c";
                 }

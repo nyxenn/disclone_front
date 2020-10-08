@@ -1,5 +1,19 @@
 # Changelog
 
+## 08/10/2020
+### Added
+- Channel creation, deletion
+- Server deletion
+- Server inviting
+- Added v-tooltip, vue-clipboard2 to project
+
+## 26/09/2020
+### Added
+- Added socket.io to project
+- Chatting in channels or DMs with the use of socket.io for real-time messaging
+### Changed
+- Updated friend requests to work with socket.io
+
 ## 21/09/2020
 ### Added
 - Startpage shows friend list, friend requests

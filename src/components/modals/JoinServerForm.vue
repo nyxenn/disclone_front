@@ -1,8 +1,8 @@
 <template>
     <form @submit.prevent="onSubmit">
         <p v-if="this.errorMessage">{{errorMessage}}</p>
-        <label for="server-id">Server ID</label>
-        <input type="text" id="server-id" min="2" max="100" v-model.lazy.trim="serverId">
+        <label for="invite-code">Invite code</label>
+        <input type="text" id="invite-code" min="2" max="100" v-model.lazy.trim="invite">
 
         <a @click="backToSelection">Back</a>
         <button type="submit">Join</button>
@@ -18,18 +18,18 @@ export default {
     },
     data() {
         return {
-            serverId: null,
+            invite: null,
             errorMessage: ""
         }
     },
     methods: {
         onSubmit() {
-            if (!this.serverId) {
+            if (!this.invite) {
                 this.errorMessage = "Please enter id of the server you wish to join.";
                 return;
             }
 
-            axios.post("/server/join", {serverid: this.serverId, userid: this.user.uid})
+            axios.post("/server/join", {invite: this.invite, uid: this.user._id, username: this.user.username})
                 .then(res => {
                     if (res.status === 200) {
                         this.$store.commit("updateServers", res.data);
@@ -41,7 +41,7 @@ export default {
                     if (err.response.data) {
                         switch(err.response.data) {
                             case "Could not find":
-                                this.errorMessage = "Could not find server with given id";
+                                this.errorMessage = "Could not link code to existing server";
                                 break;
                             case "Already joined":
                                 this.errorMessage = "You are already a member of this server";

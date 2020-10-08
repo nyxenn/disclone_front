@@ -3,16 +3,16 @@
 
   <div v-else>
     <h3 class="req-type-header">Incoming</h3>
-    <p v-for="r of this.incoming" :key="r.rid">
+    <p v-for="r of sortedRequests.incoming" :key="r._id">
       <span class="req-user-name">{{ r.user.username }}</span>
-      <button @click="acceptRequest(r.rid, r.user.uid, r.user.username)">Accept</button>
-      <button @click="denyRequest(r.rid, r.user.username)">Deny</button>
+      <button @click="acceptRequest(r._id, r.user._id, r.user.username)">Accept</button>
+      <button @click="denyRequest(r._id, r.user.username)">Deny</button>
     </p>
 
     <h3 class="req-type-header">Outgoing</h3>
-    <p v-for="r of this.outgoing" :key="r.rid">
+    <p v-for="r of sortedRequests.outgoing" :key="r._id">
       <span class="req-user-name">{{ r.user.username }}</span>
-      <button @click="denyRequest(r.rid, r.user.username)">Cancel</button>
+      <button @click="denyRequest(r._id, r.user.username)">Cancel</button>
     </p>
   </div>
 </template>
@@ -28,43 +28,31 @@ export default {
   },
   computed: {
     requests() { return this.$store.state.requests; },
+    sortedRequests() { return this.sortRequests(); },
     user() { return this.$store.state.user; },
     socket() { return this.$store.state.socket; }
   },
   watch: {
     requests: {
       immediate: true,
-      handler: "updateRequests"
+      handler: "sortRequests"
     }
-  },
-  mounted() {
-    this.socket.on("new-req", (request) => {
-      this.$store.commit("newRequest", request);
-    });
-
-    this.socket.on("del-req", (rid) => {
-      this.$store.commit("deleteRequest", rid);
-    });
-
-    this.socket.on("acc-req", (rid, friend) => {
-      this.$store.commit("acceptRequest", {rid, friend});
-    });
   },
   methods: {
     acceptRequest(rid, fuid, friendname) {
-      this.socket.emit("acceptRequest", rid, this.user.uid, fuid, friendname);
+      console.log(rid, fuid, friendname);
+      this.socket.emit("acceptRequest", rid, this.user._id, fuid, friendname);
     },
     denyRequest(rid, friendname) {
       this.socket.emit("deleteRequest", rid, friendname);
     },
-    updateRequests() {
-      this.incoming = [];
-      this.outgoing = [];
-
+    sortRequests() {
+      const sortedRequests = {"incoming": [], "outgoing": []};
       this.requests.map(r => {
-        if (r.type === "incoming") this.incoming.push(r);
-        if (r.type === "outgoing") this.outgoing.push(r);
+        if (r.type === "incoming") sortedRequests.incoming.push(r);
+        if (r.type === "outgoing") sortedRequests.outgoing.push(r);
       });
+      return sortedRequests;
     }
   }
 }
