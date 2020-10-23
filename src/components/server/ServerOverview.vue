@@ -1,8 +1,8 @@
 <template>
   <div class="server-container">
     <channel-list :channels="this.server.channels" :server="this.server" @change-channel="changeChannel" class="channel-list" />
-    <channel-chat :history="this.channel.history" :members="this.members" :sid="this.server._id" :cid="this.channel._id" class="channel-chat" />
-    <channel-members :members="this.members" :sid=this.server._id class="channel-members" />
+    <channel-chat :history="this.channel.history" :members="this.members" :sid="this.server._id" :cid="this.channel._id" :name="this.server.name" class="channel-chat" />
+    <channel-members :members="this.members" :sid=this.server._id :creatorid="this.server.creator" class="channel-members" />
   </div>
 </template>
 
@@ -33,13 +33,22 @@ export default {
       channel: {}
     }
   },
+  mounted() {
+      this.socket.on('srv-joined', (sid, _id, username) => {
+          if (sid === this.server._id) {
+              this.members.push({_id, username});
+          }
+
+          this.$store.commit("joinMember", {sid: this.server._id, member: {_id, username}});
+      });
+  },
   methods: {
     changeChannel(channelId) {
       this.channel = this.server.channels.find(c => c._id === channelId);
     },
     serverChanged(newServer) {
       axios
-        .post("/user/members/", {members: newServer.members, server: newServer.name})
+        .post("http://84.194.175.102:3000/user/members/", {members: newServer.members, server: newServer.name})
         .then(res => {
           if (res.status === 200) {
             this.members = res.data;
@@ -61,7 +70,7 @@ export default {
   }
 
   .channel-list {
-    width: 200px;
+    width: 220px;
   }
 
   .channel-chat {

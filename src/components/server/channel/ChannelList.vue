@@ -1,22 +1,36 @@
 <template>
   <div class="channels-container">
-    <div class="server-name">
-      <p>{{ this.server.name }}</p>
-      <button @click="deleteServerModal" v-if="this.server.creator === this.user._id">Delete</button>
+    <div class="server-title">
+      <span>{{ this.server.name }}</span>
+      <button @click="deleteServerModal" v-if="this.server.creator === this.user._id">
+        <font-awesome-icon icon="trash-alt" />
+      </button>
     </div>
-    <div class="channels">
-      <p id="channels-header">
-        <span>Channels</span>
-        <button @click="addChannel">+</button>
-      </p>
-      <p v-for="c in this.channels" :key="c._id" @click="changeChannel(c._id)">
-        {{c.name}}
-        <button class="delete-channel" @click="deleteChannelModal(c)" v-if="server.creator === user._id && server.channels.length > 1">Delete</button>
-      </p>
-    </div>
-    <button @click="invite" v-tooltip="{content: this.inviteMessage}">Invite</button>
-    <user-info-tag class="user-info-tag" />
 
+    <div class="channels">
+      <div id="channels-header">
+        <span>Channels</span>
+        <button @click="addChannel" v-if="this.server.creator === this.user._id">
+          <font-awesome-icon icon="plus" />
+        </button>
+      </div>
+
+      <div class="channel-list">
+        <div class="channel-list-entry" v-for="c in this.channels" :key="c._id">
+          <div class="channel-list-entry-name" @click="changeChannel(c._id)">
+            <font-awesome-icon class="channel-list-entry-icon" icon="hashtag" />
+            {{c.name}}
+          </div>
+
+          <button class="delete-channel" @click="deleteChannelModal(c)" v-if="server.creator === user._id && server.channels.length > 1">
+            <font-awesome-icon icon="trash-alt" />
+          </button>
+        </div>
+      </div>
+
+    </div>
+    <button class="invite-code-button" @click="invite" v-tooltip="{content: this.inviteMessage}">Invite</button>
+    <user-info-tag />
 
     <create-channel-form :showCreateModal="this.showCreateModal" :sid="this.server._id" @close-modal="closeCreateModal" />
     <delete-server-channel
@@ -59,17 +73,10 @@ export default {
     socket() { return this.$store.state.socket; },
     user() { return this.$store.state.user; }
   },
-  mounted() {
-    // TODO: Socket.io
-    this.socket.on("channel-added", (params) => { return params; });
-
-    this.socket.on("channel-deleted", (params) => { return params; });
-  },
   methods: {
     changeChannel(channelId) {
       this.$emit("change-channel", channelId);
     },
-    // TODO click events
     addChannel() {
       this.showCreateModal = true;
     },
@@ -95,13 +102,13 @@ export default {
     },
     deleteServer() {
       if (this.server.creator === this.user._id) {
-        axios.delete(`/server/${this.server._id}`)
+        axios.delete(`http://84.194.175.102:3000/server/${this.server._id}`)
           .catch(err => console.error(err));
       }
     },
     deleteChannel(cid) {
       if (this.server.creator === this.user._id) {
-        axios.post(`/server/delChannel`, {sid: this.server._id, cid})
+        axios.post(`http://84.194.175.102:3000/server/delChannel`, {sid: this.server._id, cid})
           .catch(err => console.error(err));
       }
     },
@@ -126,15 +133,139 @@ export default {
   .channels-container {
     display: flex;
     flex-direction: column;
+    user-select: none;
+    background: #333;
+    border-right: 1px solid #282828;
+    box-shadow: 0 0 3px 0 #222;
+  }
+
+  .server-title {
+    width: 100%;
+    height: 40px;
+    text-align: left;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #282828;
+    margin-bottom: 15px;
+  }
+
+  .server-title span {
+    display: inline-block;
+    color: #ccc;
+    font-size: 20px;
+    padding-left: 15px;
+    height: 22px;
+  }
+
+  .server-title button {
+    height: 25px;
+    width: 25px;
+    border: none;
+    font-size: 11px;
+    border-radius: 50%;
+    background: #383838;
+    margin-left: 6px;
+    color: #666;
+  }
+
+  .server-title button:hover {
+    color: #B55;
+    cursor: pointer;
   }
 
   .channels {
     flex: 1;
+    text-align: left;
   }
 
-  .user-info-tag {
-    width: 100%;
-    height: 50px;
+  .channels {
+    margin-left: 12px;
+  }
+
+  #channels-header {
+    color: #aaa;
+    font-size: 14px;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    margin-bottom: 5px;
+  }
+
+  #channels-header button {
+    height: 25px;
+    width: 25px;
+    border: none;
+    font-size: 11px;
+    border-radius: 50%;
+    background: #383838;
+    margin-left: 6px;
+    color: #666;
+  }
+
+  #channels-header button:hover {
+    cursor: pointer;
+    color: #5a5;
+  }
+
+  .channel-list {
+    overflow-y: scroll;
+    scrollbar-width: none;
+  }
+
+  .channel-list::-webkit-scrollbar {
+    width: 0;
+    display: none;
+  }
+
+  .channel-list-entry {
+    display: flex;
+    flex-wrap: nowrap;
+    font-size: 15px;
+    color: #bbb;
+    height: 25px;
+    line-height: 20px;
+  }
+
+  .channel-list-entry-name {
+    margin-right: 3px;
+  }
+
+  .channel-list-entry-name:hover {
+    cursor: pointer;
+    color: #eee;
+  }
+
+  .channel-list-entry-icon {
+    color: #777;
+  }
+
+  .channel-list-entry button {
+    border: none;
+    font-size: 11px;
+    background: none;
+    padding: 0 3px;
+    margin: none;
+    color: rgba(102, 102, 102, 0.7);
+  }
+
+  .channel-list-entry button:hover {
+    cursor: pointer;
+    color: #B55;
+  }
+
+  .invite-code-button {
+    border: none;
+    background: #444;
+    height: 40px;
+    color: #aaa;
+    font-size: 17px;
+    font-family: 'Whitney Medium';
+  }
+
+  .invite-code-button:hover {
+    color: #5a5;
+    cursor: pointer;
+    background: #4A4A4A;
   }
 
   .tooltip {

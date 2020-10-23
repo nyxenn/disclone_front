@@ -1,12 +1,17 @@
 <template>
-  <div>
-      <p v-for="msg in history" :key="msg.mid">
-          {{ members.find(m => m._id == msg.user).username }}, {{ timestampToDateString(msg.timestamp )}}
-          <br>
-          {{ msg.message }}
-      </p>
+  <div class="conversation">
+      <div class="conversation-history" v-chat-scroll>
+          <p v-for="msg of this.history" :key="msg.mid" class="conversation-message" :class="{ 'msg-pending': msg.pending }">
+              <span class="message-user">{{ getUsername(msg.user) }}</span>
+              <span class="message-time">{{ timestampToDateString(msg.timestamp )}}</span>
+              <br>
+              <span class="message-msg">{{ msg.message }}</span>
+          </p>
+      </div>
 
-      <input type="text" v-model.lazy.trim="message" v-on:keyup.enter="sendMessage">
+      <div class="conversation-message-field">
+        <input class="message-input" :placeholder="getPlaceholder()" type="text" v-model.lazy.trim="message" autocomplete="off" v-on:keyup.enter="sendMessage">
+      </div>
   </div>
 </template>
 
@@ -17,11 +22,18 @@ export default {
         members: {required: true, type: Array},
         sid: {required: false, type: String},
         cid: {required: false, type: String},
+        name: {required: true, type: String},
+    },
+    watch: {
+        members: function(newMems) {
+            if (newMems) this.updatedMembers = newMems;
+        } 
     },
     data() {
         return {
             message: "",
-            pendingMessages: []
+            pendingMessages: [],
+            updatedMembers: []
         }
     },
     computed: {
@@ -63,6 +75,15 @@ export default {
             this.socket.emit("sendChannel", message, this.sid, this.cid);
 
             this.message = "";
+        },
+        getUsername(uid) {
+          const user = this.updatedMembers.find(m => m._id === uid);
+          if (!user) return;
+          
+          return user.username;
+        },
+        getPlaceholder() {
+          return `Send message to ${this.name}`
         }
     }
 }

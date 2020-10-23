@@ -45,10 +45,10 @@ const mutations = {
         state.user.friends = friends;
     },
     openSocket(state) {
-        state.socket = io();
+        state.socket = io("http://84.194.175.102:3000/");
     },
     joinRoom(state, room) {
-        if (!state.socket) state.socket = io();
+        if (!state.socket) state.socket = io("http://84.194.175.102:3000/");
         state.socket.emit("room", room);
     },
     joinMember(state, serverMember) {
@@ -59,33 +59,34 @@ const mutations = {
         state.servers[index] = server;
     },
     newRequest(state, request) {
-        console.log("new Req", request);
-        const req = state.requests.find(r => toString(r._id) === toString(request._id));
+        const req = state.requests.find(r => r._id === request._id);
         const index = state.requests.indexOf(req);
         if (index < 0) state.requests.push(request);
+        // console.log(state.requests);
     },
     deleteRequest(state, rid) {
-        const req = state.requests.find(r => toString(r._id) === toString(rid));
+        const req = state.requests.find(r => r._id === rid);
         const reqIndex = state.requests.indexOf(req);
 
         if (reqIndex >= 0) state.requests.splice(reqIndex, 1);
     },
     acceptRequest(state, request) {
-        const req = state.requests.find(r => toString(r._id) === toString(request._id));
+        const req = state.requests.find(r => r._id === request.rid);
         const reqIndex = state.requests.indexOf(req);
         if (reqIndex >= 0) state.requests.splice(reqIndex, 1);
 
-        const friend = state.friends.find(f => toString(f._id) === toString(request.friend._id));
+        const friend = state.friends.find(f => f._id === request.friend._id);
         const friendIndex = state.friends.indexOf(friend);
         if (friendIndex < 0) state.friends.push(request.friend);
     },
     deleteFriend(state, fuid) {
-        const friend = state.friends.find(f => toString(f._id) === toString(fuid));
+        const friend = state.friends.find(f => f._id === fuid);
         const index = state.friends.indexOf(friend);
         if (index >= 0) state.friends.splice(state.friends.indexOf(fuid), 1);
     },
     addNewConversation(state, conv) {
         const index = state.conversations.indexOf(conv._id);
+        mutations.joinRoom(state, conv._id);
         if (index < 0) state.conversations.push(conv);
     },
     deleteServer(state, sid) {

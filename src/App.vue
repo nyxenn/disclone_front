@@ -33,7 +33,7 @@ export default {
     userLoggedIn(user) {
       this.$store.commit("updateUser", user);
 
-      axios.get(`/server/u/${this.user._id}`)
+      axios.get(`http://84.194.175.102:3000/server/u/${this.user._id}`)
         .then(res => {
           if (res.status === 200) {
             this.$store.commit("updateServers", res.data);
@@ -47,7 +47,7 @@ export default {
         .catch(err => console.error(err));
     },
     getFriends() {
-      axios.post("/user/friends", {friends: this.$store.state.user.friends})
+      axios.post("http://84.194.175.102:3000/user/friends", {friends: this.$store.state.user.friends})
         .then(res => {
           if (res.status === 200) {
             this.$store.commit("updateFriends", res.data);
@@ -56,7 +56,7 @@ export default {
         .catch(err => console.error(err));
     },
     getConversations() {
-      axios.get(`/conv/simple/${this.$store.state.user._id}`)
+      axios.get(`http://84.194.175.102:3000/conv/simple/${this.$store.state.user._id}`)
         .then(res => {
           if (res.status === 200) {
             this.$store.commit("updateConversations", res.data);
@@ -65,7 +65,7 @@ export default {
         .catch(err => console.error(err));
     },
     getRequests() {
-      axios.get(`/req/all/${this.$store.state.user._id}`)
+      axios.get(`http://84.194.175.102:3000/req/all/${this.$store.state.user._id}`)
         .then(res => {
           if (res.status === 200) {
             this.$store.commit("updateRequests", res.data);
@@ -84,21 +84,7 @@ export default {
 </script>
 
 <style>
-  html, body, #app, .application-overview {
-    width: 100%;
-    height: 100%;
-  }
-
   #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-  }
-
-  .application-overview {
-    width: 100%;
-    height: 100%;
+    display: flex;
   }
 </style>

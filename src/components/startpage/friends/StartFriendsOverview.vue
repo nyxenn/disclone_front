@@ -1,9 +1,12 @@
 <template>
-  <div>
-    <div id="friends-overview-headers">
-      <button class="fr-header" @click="openFriendsTab">Friends</button>
-      <button class="fr-header" @click="openRequestsTab">Request</button>
-      <button id="fr-header-btn" @click="openAddFriendForm">Add friend</button>
+  <div class="friends-overview">
+    <div class="friends-overview-headers">
+      <button class="fr-header" :class="{ active: showFriends }" @click="openFriendsTab">Friends</button>
+      <button class="fr-header" :class="{ active: showRequests}" @click="openRequestsTab">Requests</button>
+      <button id="fr-header-btn" @click="openAddFriendForm">
+        <font-awesome-icon icon="user-plus" />
+        Add friend
+      </button>
     </div>
 
     <span v-if="this.message" id="succes-message">{{this.message}}</span>
@@ -71,5 +74,34 @@ export default {
   .friends-overview-headers {
     display: flex;
     flex-wrap: nowrap;
+    margin-left: 10px;
+    margin-top: 4px;
+  }
+
+  .friends-overview-headers button {
+    border: none;
+    background: none;
+    font-family: 'Whitney Medium';
+    font-size: 18px;
+    color: #aaa;
+    margin-right: 5px;
+  }
+
+  .fr-header.active {
+    color: #ddd;
+    background-color: #333;
+    border-radius: 3px; 
+  }
+
+  #fr-header-btn {
+    background: #5B6;
+    border-radius: 3px;
+    color: #fff;
+  }
+
+  #fr-header-btn svg {
+    font-size: 16px;
+    line-height: 16px;
+    margin-right: 5px;
   }
 </style>

@@ -1,16 +1,20 @@
 <template>
   <div class="register-form">
-      <h2>Welcome <span class="strike-through">back</span>!</h2>
-      <p v-if="errorMessage">{{errorMessage}}</p>
+      <h2 class="welcome">Welcome <span class="strike-through">back</span>!</h2>
+      <p class="error" v-if="errorMessage">{{errorMessage}}</p>
 
-      <form @submit.prevent="onSubmit">
-          <label for="register-username">Username</label>
-          <input type="text" id="register-username" v-model.lazy.trim="username" required>
+      <form id="register-form" @submit.prevent="onSubmit">
+          <div class="form-group">
+            <label for="register-username">Username</label>
+            <input type="text" id="register-username" min="2" max="20" v-model.trim="username" autocomplete="off" required>
+          </div>
 
-          <label for="register-password">Password</label>
-          <input type="password" id="register-password" v-model.lazy.trim="password" required>
+          <div class="form-group">
+            <label for="register-password">Password</label>
+            <input type="password" id="register-password" v-model.trim="password" autocomplete="off" required>
+          </div>
 
-          <button class="btn btn-confirm" type="submit">Sign up</button>
+          <button class="btn btn-confirm" type="submit" :disabled="!this.username || !this.password || !this.checkLength()">Sign up</button>
           <p><a @click.prevent="returnToLoginForm" id="login-form-link">Already have an account?</a></p>
       </form>
   </div>
@@ -23,7 +27,7 @@ export default {
     methods: {
         onSubmit() {
             if (this.username && this.password) {
-                axios.post("/user/register", {
+                axios.post("http://84.194.175.102:3000/user/register", {
                     username: this.username,
                     password: this.password
                 })
@@ -36,7 +40,7 @@ export default {
                 })
                 .catch(err => {
                     if (err.response.data) {
-                        this.errorMessage = "Username already taken";
+                        this.errorMessage = err.response.data;
                         return;
                     }
                     console.error(err);
@@ -47,6 +51,10 @@ export default {
         },
         returnToLoginForm() {
             this.$emit("register-cancelled");
+        },
+        checkLength() {
+            if (this.username.length > 20 || this.username.length < 2) return false;
+            return true;
         }
     },
     data() {
@@ -60,7 +68,71 @@ export default {
 </script>
 
 <style>
-    .strike-through {
-        text-decoration-line: line-through;
+    .register-form {
+        padding: 30px 0;
+        user-select: none;
+    }
+
+    .welcome, .error {
+        margin-bottom: 20px;
+    }
+
+    .welcome {
+        font-size: 32px;
+    }
+
+    .error {
+        font-size: 18px;
+        color: #b22;
+    }
+
+    .register-form {
+        background: #333;
+        border-radius: 3px;
+        box-shadow: 10px 10px 30px rgb(41, 41, 41);
+        width: 60%;
+        max-width: 700px;
+        margin: auto;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: inline-block;
+        width: 80%;
+        text-align: left;
+        margin-bottom: 4px;
+        user-select: none;
+    }
+
+    .btn {
+        border: none;
+        color: #ccc;
+        width: 80%;
+        height: 40px;
+        font-size: 20px;
+        border-radius: 3px;
+        margin-bottom: 10px;
+    }
+
+    .btn-confirm {
+        background-color: #66E;
+    }
+
+    .btn-confirm:disabled {
+        background-color: #559;
+        color: #888;
+    }
+
+    .btn-confirm:hover {
+        background-color: #55D;
+        cursor: pointer;
+    }
+
+    .btn-confirm:disabled:hover {
+        background-color: #559;
+        cursor: default;
     }
 </style>

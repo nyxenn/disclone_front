@@ -34,7 +34,7 @@ export default {
         },
         openConversation(dmid) {
             this.conversation = this.$store.state.conversations.find(c => c._id === dmid);
-            axios.get(`/conv/history/${dmid}`)
+            axios.get(`http://84.194.175.102:3000/conv/history/${dmid}`)
               .then(res => {
                 if (res.status === 200) {
                   this.history = res.data.history;
@@ -59,7 +59,7 @@ export default {
   }
 
   .conversations-list {
-    width: 200px;
+    width: 220px;
   }
 
   .friends-overview, .conversation {
