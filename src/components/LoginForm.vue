@@ -37,6 +37,9 @@
         components: {
             RegistrationForm
         },
+        computed: {
+            baseUrl() { return this.$store.state.baseip; }
+        },
         methods: {
             cleanForm() {
                 this.username = "";
@@ -44,7 +47,7 @@
             },
             onSubmit() {
                 if (this.username && this.password) {
-                    axios.post("http://84.194.175.102:3000/user/login", {
+                    axios.post(this.baseUrl + "/user/login", {
                         "username": this.username,
                         "password": this.password
                     })

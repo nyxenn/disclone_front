@@ -34,7 +34,8 @@ export default {
         } 
     },
     computed: {
-        user() { return this.$store.state.user; }
+        user() { return this.$store.state.user; },
+        baseUrl() { return this.$store.state.baseip; }
     },
     data() {
         return {
@@ -48,7 +49,7 @@ export default {
             let split = this.channelName.split(' ');
             split = split.join("-");
 
-            axios.post("http://84.194.175.102:3000/server/channel/new", {name: split, sid: this.sid})
+            axios.post(this.baseUrl + "/server/channel/new", {name: split, sid: this.sid})
                 .then(() => {
                     this.hideModal();
                     this.channelName = "";

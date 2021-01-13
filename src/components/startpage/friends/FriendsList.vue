@@ -29,12 +29,13 @@ export default {
     computed: {
         friends() { return this.$store.state.friends; },
         user() { return this.$store.state.user; },
-        socket() { return this.$store.state.socket; }
+        socket() { return this.$store.state.socket; },
+        baseUrl() { return this.$store.state.baseip; }
     },
     methods: {
         openConversation(fuid) {
             console.log(this.user, fuid);
-            axios.post("http://84.194.175.102:3000/conv/open", {uid: this.user._id, fuid})
+            axios.post(this.baseUrl + "/conv/open", {uid: this.user._id, fuid})
                 .then(res => {console.log(res); this.$emit("open-conv", res.data)})
                 .catch(err => console.error(err));
         },

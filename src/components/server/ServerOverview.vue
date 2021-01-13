@@ -42,13 +42,16 @@ export default {
           this.$store.commit("joinMember", {sid: this.server._id, member: {_id, username}});
       });
   },
+  computed: {
+        baseUrl() { return this.$store.state.baseip; }
+    },
   methods: {
     changeChannel(channelId) {
       this.channel = this.server.channels.find(c => c._id === channelId);
     },
     serverChanged(newServer) {
       axios
-        .post("http://84.194.175.102:3000/user/members/", {members: newServer.members, server: newServer.name})
+        .post(this.baseUrl + "/user/members/", {members: newServer.members, server: newServer.name})
         .then(res => {
           if (res.status === 200) {
             this.members = res.data;

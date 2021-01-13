@@ -71,7 +71,8 @@ export default {
   },
   computed: {
     socket() { return this.$store.state.socket; },
-    user() { return this.$store.state.user; }
+    user() { return this.$store.state.user; },
+    baseUrl() { return this.$store.state.baseip; }
   },
   methods: {
     changeChannel(channelId) {
@@ -102,13 +103,13 @@ export default {
     },
     deleteServer() {
       if (this.server.creator === this.user._id) {
-        axios.delete(`http://84.194.175.102:3000/server/${this.server._id}`)
+        axios.delete(this.baseUrl + `/server/${this.server._id}`)
           .catch(err => console.error(err));
       }
     },
     deleteChannel(cid) {
       if (this.server.creator === this.user._id) {
-        axios.post(`http://84.194.175.102:3000/server/delChannel`, {sid: this.server._id, cid})
+        axios.post(this.baseUrl + `/server/delChannel`, {sid: this.server._id, cid})
           .catch(err => console.error(err));
       }
     },

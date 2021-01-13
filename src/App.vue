@@ -18,7 +18,8 @@ export default {
   },
   computed: {
     user() { return this.$store.state.user; },
-    socket() { return this.$store.state.socket; }
+    socket() { return this.$store.state.socket; },
+    baseUrl() { return this.$store.state.baseip; }
   },
   mounted() {
     this.$store.commit("openSocket");
@@ -33,7 +34,7 @@ export default {
     userLoggedIn(user) {
       this.$store.commit("updateUser", user);
 
-      axios.get(`http://84.194.175.102:3000/server/u/${this.user._id}`)
+      axios.get( this.baseUrl + `/server/u/${this.user._id}`)
         .then(res => {
           if (res.status === 200) {
             this.$store.commit("updateServers", res.data);
@@ -47,7 +48,7 @@ export default {
         .catch(err => console.error(err));
     },
     getFriends() {
-      axios.post("http://84.194.175.102:3000/user/friends", {friends: this.$store.state.user.friends})
+      axios.post(this.baseUrl + "/user/friends", {friends: this.$store.state.user.friends})
         .then(res => {
           if (res.status === 200) {
             this.$store.commit("updateFriends", res.data);
@@ -56,7 +57,7 @@ export default {
         .catch(err => console.error(err));
     },
     getConversations() {
-      axios.get(`http://84.194.175.102:3000/conv/simple/${this.$store.state.user._id}`)
+      axios.get(this.baseUrl + `/conv/simple/${this.$store.state.user._id}`)
         .then(res => {
           if (res.status === 200) {
             this.$store.commit("updateConversations", res.data);
@@ -65,7 +66,7 @@ export default {
         .catch(err => console.error(err));
     },
     getRequests() {
-      axios.get(`http://84.194.175.102:3000/req/all/${this.$store.state.user._id}`)
+      axios.get(this.baseUrl + `/req/all/${this.$store.state.user._id}`)
         .then(res => {
           if (res.status === 200) {
             this.$store.commit("updateRequests", res.data);

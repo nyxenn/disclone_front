@@ -10,7 +10,8 @@ const state = {
     friends: [],
     requests: [],
     conversations: [],
-    socket: null
+    socket: null,
+    baseip: "http://192.168.0.156:8990"
 };
 
 const mutations = {
@@ -45,10 +46,10 @@ const mutations = {
         state.user.friends = friends;
     },
     openSocket(state) {
-        state.socket = io("http://84.194.175.102:3000/");
+        state.socket = io(state.baseip);
     },
     joinRoom(state, room) {
-        if (!state.socket) state.socket = io("http://84.194.175.102:3000/");
+        if (!state.socket) state.socket = io(state.baseip);
         state.socket.emit("room", room);
     },
     joinMember(state, serverMember) {

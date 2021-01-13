@@ -22,7 +22,8 @@ import axios from "axios";
 
 export default {
     computed: {
-        user() { return this.$store.state.user; }
+        user() { return this.$store.state.user; },
+        baseUrl() { return this.$store.state.baseip; }
     },
     data() {
         return {
@@ -37,7 +38,7 @@ export default {
                 return;
             }
 
-            axios.post("http://84.194.175.102:3000/server/join", {invite: this.invite, uid: this.user._id, username: this.user.username})
+            axios.post(this.baseUrl + "/server/join", {invite: this.invite, uid: this.user._id, username: this.user.username})
                 .then(res => {
                     if (res.status === 200) {
                         this.$store.commit("updateServers", res.data);

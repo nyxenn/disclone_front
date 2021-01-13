@@ -24,10 +24,13 @@
 import axios from "axios";
 
 export default {
+    computed: {
+        baseUrl() { return this.$store.state.baseip; }
+    },
     methods: {
         onSubmit() {
             if (this.username && this.password) {
-                axios.post("http://84.194.175.102:3000/user/register", {
+                axios.post(this.baseUrl + "/user/register", {
                     username: this.username,
                     password: this.password
                 })
