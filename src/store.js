@@ -11,7 +11,7 @@ const state = {
     requests: [],
     conversations: [],
     socket: null,
-    baseip: "http://192.168.0.156:8990"
+    baseip: "http://livingdex.redirectme.net:7778"
 };
 
 const mutations = {
